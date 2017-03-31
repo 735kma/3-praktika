@@ -1,0 +1,248 @@
+using Lab3Sort;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+public class Test
+{
+    public static void GenerateArray(int[] array)
+    {
+        for (int i = array.Length; i > 0; i--)
+        {
+            array[i - 1] = i;
+        }
+        array[array.Length / 2] = -5;
+    }
+    public static void Sort(int[] array)
+    {
+
+        List<ISort> list=new List<ISort>();
+        list.Add(new CombSort());
+        list.Add(new QuickSort());
+        list.Add(new CocktailSort());
+        foreach ( var sort in list)
+        {
+            var a=new int[array.Length];
+            Array.Copy(array, 0, a, 0, array.Length - 1);
+            sort.Sort(a);
+            Console.WriteLine('\t'+Convert.ToString(sort.Reshuffle));
+        }
+    }
+    public static void TestArray(int count)
+    {
+        var array = new int[count];
+        GenerateArray(array);
+        Sort(array);
+    }
+    public static void Main()
+    {int i = 500;
+        //for(int i=50;i<=500;i+=50)
+        {
+            Console.WriteLine(Convert.ToString(i) + ':');
+            TestArray(i);
+        }
+    }
+}
+////////////
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Lab3Sort
+{
+    interface ISort
+    {
+        void Sort(int[] array);
+        int Reshuffle { get; set; }
+    }
+}
+///////////////////
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Lab3Sort
+{
+    public class CombSort : ISort
+    {
+        private int _reshuffle;
+        public CombSort()
+        {
+            _reshuffle = 0;
+        }
+        public int Reshuffle
+        {
+            get
+            {
+                return _reshuffle;
+            }
+            set
+            {
+                _reshuffle = value;
+            }
+        }
+        public void Sort(int[] array)
+        {
+            int size = array.Length;
+            int step = size;
+            while (step >= 1)
+            {
+                for (int i = 0; i + step < size; i++)
+                    if (array[i] > array[i + step])
+                    {
+                        int temp = array[i];
+                        array[i] = array[i + step];
+                        array[i + step] = temp;
+                        _reshuffle++;
+
+                    }
+                step = step - 1;
+            }
+
+
+        }
+    }
+}
+///////////////////////////////////
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Lab3Sort
+{
+    public class QuickSort : ISort
+    {
+        private int _reshuffle;
+        public int Reshuffle
+        {
+            get
+            {
+                return _reshuffle;
+            }
+            set
+            {
+                _reshuffle = value;
+            }
+        }
+        public QuickSort()
+        {
+            _reshuffle = 0;
+        }
+        public void Sort(int[] array)
+        {
+            int l = 0;
+            int r = array.Length - 1;
+            int i = l;
+            int j = r;
+            int temp;
+            int x =array[ (array.Length-1) / 2];
+            while (i < j)
+            {
+                while (array[i] < x) i++;
+                while (array[j] > x) j--;
+                if (i <= j)
+                {
+                    temp = array[i];
+                    array[i] = array[j];
+                    array[j] = temp;
+                    i++;
+                    j--;
+                    _reshuffle++;
+                }
+            }
+          
+            if (i < r)
+            {
+                int[] array2 = new int[r - i + 1];
+                Array.Copy(array, i, array2, 0, r - i + 1);
+                Sort(array2);
+                for (int q = i; q <= r; q++)
+                {
+                    array[q] = array2[q - i];
+                }
+            }
+
+            if (l < j)
+            {
+                int[] array2 = new int[j - l + 1];
+                Array.Copy(array, l, array2, 0, j - l + 1);
+                Sort(array2);
+                for (int q = l; q <= j; q++)
+                {
+                    array[q] = array2[q - l];
+                }
+            }
+        }
+    }
+}
+/////////////////////////////////
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Lab3Sort
+{
+    public class CocktailSort : ISort
+    {
+        private int _reshuffle;
+        public int Reshuffle
+        {
+            get
+            {
+                return _reshuffle;
+            }
+            set
+            {
+                _reshuffle = value;
+            }
+        }
+
+        public CocktailSort()
+        {
+            _reshuffle = 0;
+        }
+
+        public void Sort(int[] array)
+        {
+            int l = 0;
+            int r = array.Length-1;
+            while (l < r)
+            {
+                for (int j = l; j < r; j++)
+                {
+                    if (array[j] < array[j + 1])
+                    {
+                        int temp = array[j + 1];
+                        array[j + 1] = array[j];
+                        array[j] = temp;
+                        _reshuffle++;
+                    }
+
+                }
+                r--;
+                for (int i = r; i > l; i--)
+                {
+                    if (array[i] < array[i + 1])
+                    {
+                        int temp = array[i + 1];
+                        array[i + 1] = array[i];
+                        array[i] = temp;
+                        _reshuffle++;
+                    }
+                }
+                l++;
+            }
+        }
+    }
+}
+//////////////////////////////////////////
